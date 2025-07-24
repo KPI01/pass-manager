@@ -4,7 +4,7 @@ namespace App\Http\Requests\Models\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,20 +22,18 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'unique:users,email'],
-            'name' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:6', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{1,}$/', 'confirmed'],
+            'email' => ['sometimes', 'email', 'unique:users,email,' . $this->route('user')->id],
+            'name' => ['sometimes', 'string', 'max:255'],
+            'password' => ['sometimes', 'string', 'min:6', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{1,}$/', 'confirmed'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'El correo electrónico debe ser una dirección válida.',
             'email.unique' => 'El correo electrónico ya está en uso.',
-            'name.required' => 'El nombre es obligatorio.',
-            'password.required' => 'La contraseña es obligatoria.',
+            'name.string' => 'El nombre debe ser una cadena de texto.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
             'password.regex' => 'La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',

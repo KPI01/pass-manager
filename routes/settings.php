@@ -22,5 +22,5 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::resource('user', UserController::class)->only(['index', 'create']);
+    Route::resource('user', UserController::class)->only(['index', 'create', 'store', 'update', 'destroy']);
 });

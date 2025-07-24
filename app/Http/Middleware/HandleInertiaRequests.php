@@ -52,6 +52,8 @@ class HandleInertiaRequests extends Middleware
                     'user' => [
                         'viewAny' => $request->user()?->can('viewAny', $sampleUser),
                         'create' => $request->user()?->can('create', $sampleUser),
+                        'update' => $request->user()?->can('update', $sampleUser),
+                        'delete' => $request    ->user()?->can('delete', $sampleUser),
                     ]
                 ]
             ],
