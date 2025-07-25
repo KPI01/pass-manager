@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Register;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
@@ -38,14 +39,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
         $sampleUser =  User::first();
-        logger('Sample user', ['user' => $sampleUser]);
+        $sampleRegister =  Register::first();
 
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
+            'token' => $request->session()->token(),
             'auth' => [
                 'user' => $request->user(),
                 'can' => [
@@ -53,8 +53,14 @@ class HandleInertiaRequests extends Middleware
                         'viewAny' => $request->user()?->can('viewAny', $sampleUser),
                         'create' => $request->user()?->can('create', $sampleUser),
                         'update' => $request->user()?->can('update', $sampleUser),
-                        'delete' => $request    ->user()?->can('delete', $sampleUser),
-                    ]
+                        'delete' => $request->user()?->can('delete', $sampleUser),
+                    ],
+                    'register' => [
+                        'viewAny' => $request->user()?->can('viewAny', $sampleRegister),
+                        'create' => $request->user()?->can('create', $sampleRegister),
+                        'update' => $request->user()?->can('update', $sampleRegister),
+                        'delete' => $request->user()?->can('delete', $sampleRegister),
+                    ],
                 ]
             ],
             'ziggy' => fn(): array => [

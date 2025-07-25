@@ -3,21 +3,26 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Users } from 'lucide-react';
+import { AtSign, BookOpen, Folder, IdCard, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const appNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
+        title: 'Usuarios',
+        href: '/registers?entity=user',
+        icon: Users,
+    },
+    {
+        title: 'Correos',
+        href: '/registers?entity=email',
+        icon: AtSign,
     },
 ];
 const configNavItems: NavItem[] = [
     {
-        title: 'Usuarios',
+        title: 'Acceso',
         href: '/user',
-        icon: Users,
+        icon: IdCard,
     },
 ];
 
