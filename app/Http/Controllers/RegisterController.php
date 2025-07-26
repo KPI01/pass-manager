@@ -23,7 +23,7 @@ class RegisterController extends Controller
             ->get()
             : Register::all();
 
-        if (! Auth::user()->can('viewAny', $registers->first())) {
+        if (! Auth::user()->can('viewAny', Register::class)) {
             abort(403, 'Permisos insuficientes.');
         }
 
@@ -31,14 +31,6 @@ class RegisterController extends Controller
             'registers' => $registers,
             'entityType' => $entityType,
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -51,14 +43,6 @@ class RegisterController extends Controller
         Register::create($validated);
 
         return to_route('registers.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Register $register)
-    {
-        //
     }
 
     /**
@@ -80,11 +64,13 @@ class RegisterController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Check if the user can update the register
      */
-    public function edit(Register $register)
+    public function checkCanUpdate(Register $register) 
     {
-        //
+        return response()->json([
+            'canEdit' => Auth::user()->can('update', $register)
+        ]);
     }
 
     /**
@@ -92,7 +78,15 @@ class RegisterController extends Controller
      */
     public function update(UpdateRegisterRequest $request, Register $register)
     {
-        //
+        if (! Auth::user()->can('update', $register)) {
+            abort(403, 'Permisos insuficientes.');
+        }
+
+        $validated = $request->validated();
+
+        $register->update($validated);
+
+        return to_route('registers.index');
     }
 
     /**

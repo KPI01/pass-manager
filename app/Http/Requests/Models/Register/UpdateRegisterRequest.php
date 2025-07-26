@@ -4,6 +4,7 @@ namespace App\Http\Requests\Models\Register;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Register;
+use Illuminate\Validation\Rule;
 
 class UpdateRegisterRequest extends FormRequest
 {
@@ -12,7 +13,8 @@ class UpdateRegisterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('update', Register::class);
+        $register = Register::find($this->route('register'))->first();
+        return $this->user()?->can('update', $register);
     }
 
     /**
@@ -23,7 +25,11 @@ class UpdateRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'description' => ['sometimes', 'max:255'],
+            'type' => ['sometimes', Rule::in(['user', 'email'])],
+            'login' => ['sometimes', 'max:150'],
+            'password' => ['sometimes', 'min:8'],
+            'notes' => ['nullable', 'max:350'],
         ];
     }
 }

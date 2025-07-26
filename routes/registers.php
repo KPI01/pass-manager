@@ -9,5 +9,7 @@ Route::middleware('auth')->group(function () {
     Route::name('registers.')->group(function () {
         Route::post('registers/{register}/reveal-password', [RegisterController::class, 'revealPassword'])
             ->name('reveal-password');
+        Route::post('registers/{register}/check-can-update', [RegisterController::class, 'checkCanUpdate'])
+            ->name('check-can-update');
     });
 });

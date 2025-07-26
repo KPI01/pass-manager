@@ -1,35 +1,50 @@
 import { Input } from '@/components/forms/text-input';
+import { AlertDialogAction } from '@/components/ui/alert-dialog';
 import { buttonVariants } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import checkCanUpdateRegister from '@/lib/models/register/check-can-update';
 import { getRegisterPassword } from '@/lib/models/register/get-password';
 import { SharedData } from '@/types';
 import { Register } from '@/types/models';
-import { usePage } from '@inertiajs/react';
-import { Clipboard, Eye, EyeClosed, RotateCcw } from 'lucide-react';
-import { useState } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
+import { Check, Clipboard, Eye, EyeClosed, LoaderCircle } from 'lucide-react';
+import { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 interface Props {
     register: Register;
-    can: SharedData['auth']['can'];
 }
 
-function ShowRegisterPassword({ register, can }: Props) {
-    const props = usePage<SharedData>().props;
-    console.debug('props:', props);
+function ShowRegisterPassword({ register }: Props) {
+    const { token } = usePage<SharedData>().props;
+
+    let [canEdit, setCanEdit] = useState(false);
+    useEffect(() => {
+        checkCanUpdateRegister(register.id, token).then((data) => {
+            console.debug('data', data);
+            if (data.canEdit) setCanEdit(data.canEdit);
+            return;
+        });
+    }, []);
 
     const [revealed, setRevealed] = useState(false);
     const [password, setPassword] = useState('');
+    const { setData, patch, isDirty, processing } = useForm({
+        password: '',
+    });
 
     const togglePassword = () => {
         if (revealed) {
             setRevealed(false);
-            setPassword('');
             return;
         }
 
-        getRegisterPassword(register.id, props.token).then((value) => {
+        if (password) {
+            setRevealed(true);
+            return;
+        }
+
+        getRegisterPassword(register.id, token).then((value) => {
             if (value.status === 'error') {
                 toast.error('No se ha podido revelar la clave', { description: value.error });
                 return;
@@ -43,8 +58,8 @@ function ShowRegisterPassword({ register, can }: Props) {
     };
 
     const copyPassword = () => {
-        if (!revealed) {
-            getRegisterPassword(register.id, props.token).then((value) => {
+        if (!revealed && password === '') {
+            getRegisterPassword(register.id, token).then((value) => {
                 if (value.status === 'error') {
                     toast.error('No se ha podido revelar la clave', { description: value.error });
                     return;
@@ -56,45 +71,60 @@ function ShowRegisterPassword({ register, can }: Props) {
                 }
             });
         }
+
+        if (password !== '') {
+            navigator.clipboard.writeText(password);
+            toast.info('Se ha copiado la clave en el portapapeles.');
+        }
+    };
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+
+        patch(`/registers/${register.id}`, {
+            onSuccess: () => {
+                toast.success('La clave se ha actualizado correctamente.');
+            },
+        });
     };
 
     return (
-        <div className="flex flex-col gap-8">
-            <div className="flex items-center gap-2">
-                <Input
-                    className="select-none"
-                    placeholder="********"
-                    name="password"
-                    type={revealed ? 'text' : 'password'}
-                    value={password}
-                    disabled
-                />
+        <form onSubmit={handleSubmit} className="flex items-center gap-2">
+            <Input
+                className="select-none"
+                placeholder="********"
+                name="password"
+                type={revealed ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => {
+                    setPassword(e.target.value);
+                    setData('password', e.target.value);
+                }}
+                disabled={!(canEdit && revealed)}
+            />
+            <Tooltip>
+                <TooltipTrigger type="button" onClick={() => togglePassword()} className={buttonVariants({ variant: 'outline', size: 'icon' })}>
+                    {!revealed ? <EyeClosed /> : <Eye />}
+                </TooltipTrigger>
+                <TooltipContent>{revealed ? 'Ocultar' : 'Revelar'}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+                <TooltipTrigger type="button" className={buttonVariants({ variant: 'outline', size: 'icon' })} onClick={() => copyPassword()}>
+                    <Clipboard />
+                </TooltipTrigger>{' '}
+                <TooltipContent>Copiar</TooltipContent>
+            </Tooltip>
+            {isDirty && (
                 <Tooltip>
-                    <TooltipTrigger type="button" onClick={() => togglePassword()} className={buttonVariants({ variant: 'outline', size: 'sm' })}>
-                        {!revealed ? <EyeClosed /> : <Eye />}
-                    </TooltipTrigger>
-                    <TooltipContent>{revealed ? 'Ocultar' : 'Revelar'}</TooltipContent>
+                    <AlertDialogAction asChild>
+                        <TooltipTrigger type="submit" className={buttonVariants({ variant: 'default', size: 'icon' })}>
+                            {processing ? <LoaderCircle className="animate-spin" /> : <Check />}
+                        </TooltipTrigger>
+                    </AlertDialogAction>
+                    <TooltipContent>Guardar cambios</TooltipContent>
                 </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger type="button" className={buttonVariants({ variant: 'outline', size: 'sm' })} onClick={() => copyPassword()}>
-                        <Clipboard />
-                    </TooltipTrigger>{' '}
-                    <TooltipContent>Copiar</TooltipContent>
-                </Tooltip>
-                {can.register.update && (
-                    <Popover>
-                        <Tooltip>
-                            <PopoverTrigger asChild type="button" className={buttonVariants({ variant: 'default', size: 'sm' })}>
-                                <TooltipTrigger>
-                                    <RotateCcw />
-                                </TooltipTrigger>
-                            </PopoverTrigger>
-                            <PopoverContent side="right">Formulario para reestablecer la clave.</PopoverContent>
-                        </Tooltip>
-                    </Popover>
-                )}
-            </div>
-        </div>
+            )}
+        </form>
     );
 }
 

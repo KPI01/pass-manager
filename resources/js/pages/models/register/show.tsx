@@ -1,26 +1,33 @@
 import { InputWithLabel } from '@/components/forms/text-input';
 import { TextareaWithLabel } from '@/components/forms/textarea';
-import { AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { AlertDialogAction } from '@/components/ui/alert-dialog';
 import { buttonVariants } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import checkCanUpdateRegister from '@/lib/models/register/check-can-update';
 import { SharedData } from '@/types';
 import { Register } from '@/types/models';
-import { useForm } from '@inertiajs/react';
-import { Check, Clipboard } from 'lucide-react';
-import { FormEvent } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
+import { Check, Clipboard, LoaderCircle } from 'lucide-react';
+import { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import ShowRegisterPassword from './show-password';
 
 interface Props {
     register: Register;
-    can: SharedData['auth']['can'];
 }
 
-function ShowRegister({ register, can }: Props) {
-    console.debug('register:', register);
+function ShowRegister({ register }: Props) {
+    const { token } = usePage<SharedData>().props;
 
-    const { data, setData, isDirty, patch, hasErrors } = useForm({
+    let [canEdit, setCanEdit] = useState(false);
+    useEffect(() => {
+        checkCanUpdateRegister(register.id, token).then((data) => {
+            if (data.canEdit) setCanEdit(data.canEdit);
+            return;
+        });
+    }, []);
+    console.debug('canEdit', canEdit);
+
+    const { data, setData, isDirty, patch, hasErrors, processing } = useForm({
         description: register.description,
         login: register.login,
         notes: register.notes,
@@ -32,7 +39,7 @@ function ShowRegister({ register, can }: Props) {
         patch(`/registers/${register.id}`, {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success(`${register.type === 'user' ? 'Usuario' : 'Correo'} actualizado`);
+                toast.success('Registro actualizado correctamente.');
             },
         });
     };
@@ -43,54 +50,54 @@ function ShowRegister({ register, can }: Props) {
     };
 
     return (
-        <>
-            <form onSubmit={handleSubmit} className="grid gap-4">
-                <InputWithLabel
-                    label="Descripción"
-                    value={data.description}
-                    onChange={(e) => setData('description', e.target.value)}
-                    disabled={!can.register.update}
-                />
-                <div className="flex items-end gap-2">
-                    <div className="basis-full">
-                        <InputWithLabel
-                            label={register.type === 'user' ? 'Nombre de usuario' : 'Correo electrónico'}
-                            value={data.login}
-                            onChange={(e) => setData('login', e.target.value)}
-                            disabled={!can.register.update}
-                        />
-                    </div>
-                    <Tooltip>
-                        <TooltipTrigger
-                            type="button"
-                            className={buttonVariants({ size: 'icon', variant: 'outline' })}
-                            onClick={() => copyLoginToClipboard()}
-                        >
-                            <Clipboard />
-                        </TooltipTrigger>
-                        <TooltipContent>Copiar</TooltipContent>
-                    </Tooltip>
+        <form onSubmit={handleSubmit} className="grid gap-4">
+            <InputWithLabel
+                label="Descripción"
+                value={data.description}
+                onChange={(e) => setData('description', e.target.value)}
+                disabled={!canEdit}
+            />
+            <div className="flex items-end gap-2">
+                <div className="basis-full">
+                    <InputWithLabel
+                        label={register.type === 'user' ? 'Nombre de usuario' : 'Correo electrónico'}
+                        value={data.login}
+                        onChange={(e) => setData('login', e.target.value)}
+                        disabled={!canEdit}
+                    />
                 </div>
-                <TextareaWithLabel
-                    label="Observaciones"
-                    value={data.notes}
-                    onChange={(e) => setData('notes', e.target.value)}
-                    disabled={!can.register.update}
-                />
-                <Separator />
-                <h3 className="text-lg font-bold">Clave</h3>
-                <ShowRegisterPassword register={register} can={can} />
-            </form>
+                <Tooltip>
+                    <TooltipTrigger
+                        type="button"
+                        className={buttonVariants({ size: 'icon', variant: 'outline' })}
+                        onClick={() => copyLoginToClipboard()}
+                    >
+                        <Clipboard />
+                    </TooltipTrigger>
+                    <TooltipContent>Copiar</TooltipContent>
+                </Tooltip>
+            </div>
+            <TextareaWithLabel
+                label="Observaciones"
+                value={data.notes ?? ''}
+                onChange={(e) => setData('notes', e.target.value)}
+                disabled={!canEdit}
+            />
             <div className="flex items-center justify-end gap-2">
-                <AlertDialogCancel type="button">Cerrar</AlertDialogCancel>
                 {isDirty && !hasErrors && (
                     <AlertDialogAction type="submit">
-                        <Check />
-                        Guardar
+                        {processing ? (
+                            <LoaderCircle />
+                        ) : (
+                            <>
+                                <Check />
+                                Guardar
+                            </>
+                        )}
                     </AlertDialogAction>
                 )}
             </div>
-        </>
+        </form>
     );
 }
 

@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "artisan: serve",
+            "type": "shell",
+            "command": "php artisan serve",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared",
+                "group": "dev server"
+            }
+        },
+        {
+            "label": "pnpm: dev",
+            "type": "shell",
+            "command": "pnpm run dev",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared",
+                "group": "dev server"
+            }
+        }
+    ]
+}

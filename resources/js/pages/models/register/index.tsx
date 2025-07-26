@@ -1,17 +1,19 @@
 import { DataTable } from '@/components/data-table/table';
-import { AlertDialog, AlertDialogContent, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import { registerColumn } from '@/lib/models/column-definitions';
 import { BreadcrumbItem, SharedData } from '@/types';
 import { Register } from '@/types/models';
 import { usePage } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ListPlus } from 'lucide-react';
+import { ListPlus, X } from 'lucide-react';
 import { useState } from 'react';
 import CreateRegister from './create';
 import DeleteRegister from './delete';
 import ShowRegister from './show';
+import ShowRegisterPassword from './show-password';
 
 interface Props {
     registers: Register[];
@@ -19,7 +21,7 @@ interface Props {
 }
 
 function IndexRegister({ registers, entityType }: Props) {
-    const { auth, token } = usePage<SharedData>().props;
+    const { token } = usePage<SharedData>().props;
 
     const [selectedRegister, setselectedRegister] = useState<Register>();
     const handleRegisterSelection = (id: number) => {
@@ -30,6 +32,7 @@ function IndexRegister({ registers, entityType }: Props) {
     const [createAlert, setCreateAlert] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [deleteAlert, setDeleteAlert] = useState(false);
+    const [changePasswordPopover, setChangePasswordPopover] = useState(false);
 
     let entity: string | undefined = ['email', 'user'].find((type) => entityType === type);
     let breadcrumbs: BreadcrumbItem[] = [{ title: 'Registros', href: `/registers` }];
@@ -60,8 +63,16 @@ function IndexRegister({ registers, entityType }: Props) {
 
             <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
                 <AlertDialogContent>
-                    <AlertDialogTitle className="text-xl font-bold">Registro detallado</AlertDialogTitle>
-                    <ShowRegister can={auth.can} register={selectedRegister!} />
+                    <AlertDialogTitle className="flex items-center justify-between text-xl font-bold">
+                        <div>Registro detallado</div>
+                        <AlertDialogCancel type="button" className={buttonVariants({ variant: 'ghost', size: 'icon' })}>
+                            <X />
+                        </AlertDialogCancel>
+                    </AlertDialogTitle>
+                    <ShowRegister register={selectedRegister!} />
+                    <Separator />
+                    <h3 className="text-lg font-bold">Clave</h3>
+                    <ShowRegisterPassword register={selectedRegister!}  />
                 </AlertDialogContent>
             </AlertDialog>
 

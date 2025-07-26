@@ -39,9 +39,6 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $sampleUser =  User::first();
-        $sampleRegister =  Register::first();
-
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -50,16 +47,12 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'can' => [
                     'user' => [
-                        'viewAny' => $request->user()?->can('viewAny', $sampleUser),
-                        'create' => $request->user()?->can('create', $sampleUser),
-                        'update' => $request->user()?->can('update', $sampleUser),
-                        'delete' => $request->user()?->can('delete', $sampleUser),
+                        'viewAny' => $request->user()?->can('viewAny', User::class),
+                        'create' => $request->user()?->can('create', User::class),
                     ],
                     'register' => [
-                        'viewAny' => $request->user()?->can('viewAny', $sampleRegister),
-                        'create' => $request->user()?->can('create', $sampleRegister),
-                        'update' => $request->user()?->can('update', $sampleRegister),
-                        'delete' => $request->user()?->can('delete', $sampleRegister),
+                        'viewAny' => $request->user()?->can('viewAny', Register::class),
+                        'create' => $request->user()?->can('create', Register::class),
                     ],
                 ]
             ],

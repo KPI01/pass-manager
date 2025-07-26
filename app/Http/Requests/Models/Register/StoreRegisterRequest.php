@@ -14,7 +14,7 @@ class StoreRegisterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('create', Register::first());
+        return $this->user()?->can('create', Register::class);
     }
 
     /**
