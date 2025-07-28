@@ -25,6 +25,7 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'email', 'unique:users,email'],
             'name' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:6', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{1,}$/', 'confirmed'],
+            'role_id' => ['required', 'exists:roles,id'],
         ];
     }
 
@@ -39,6 +40,7 @@ class StoreUserRequest extends FormRequest
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
             'password.regex' => 'La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+            'role_id.required' => 'El rol es obligatorio.',
         ];
     }
 }

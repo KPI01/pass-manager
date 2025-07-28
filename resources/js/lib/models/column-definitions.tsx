@@ -25,6 +25,10 @@ export const userColumn = ({ currentUserId, selectUser, resetPasswordAlert, edit
         id: 'Nombre',
         header: ({ column }) => <DataTableColumnHeader title="Nombre" column={column} />,
     }),
+    userColHelper.accessor('role.name', {
+        id: 'Rol',
+        header: ({ column }) => <DataTableColumnHeader title="Rol" column={column} />,
+    }),
     userColHelper.accessor('created_at', {
         id: 'Creación',
         header: ({ column }) => <DataTableColumnHeader title="Fecha de creación" column={column} />,
@@ -185,10 +189,13 @@ export const registerColumn = (
                             Más detalles
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive focus:bg-destructive/20 focus:text-destructive" onClick={() => {
+                        <DropdownMenuItem
+                            className="text-destructive focus:bg-destructive/20 focus:text-destructive"
+                            onClick={() => {
                                 selectionHandler(row.original.id);
                                 changers.setDeleteAlert(true);
-                            }}>
+                            }}
+                        >
                             <Trash className="text-inherit" />
                             Eliminar
                         </DropdownMenuItem>

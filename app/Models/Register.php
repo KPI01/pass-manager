@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User;
+
 
 class Register extends Model
 {
@@ -21,6 +21,12 @@ class Register extends Model
         'password',
         'notes',
     ];
+
+    protected $hidden = [
+        'owner_id'
+    ];
+
+    protected $with = ['owner'];
 
     protected $casts = [
         'created_at' => 'datetime',
@@ -40,5 +46,10 @@ class Register extends Model
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = empty($value) ? '' : Crypt::encryptString($value);
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

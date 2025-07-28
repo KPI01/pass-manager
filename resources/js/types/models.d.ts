@@ -3,10 +3,17 @@ type BaseModel = {
     created_at: string;
     updated_at: string;
 };
+
+type Role = {
+    name: string;
+    short: string;
+} & BaseModel;
+
 export type User = {
     name: string;
     email: string;
     password: string;
+    role: Role;
 } & BaseModel;
 
 export type Register = {
@@ -15,4 +22,5 @@ export type Register = {
     login: string;
     password: string;
     notes?: string;
+    owner: User;
 } & BaseModel;

@@ -12,11 +12,11 @@ import { useState } from 'react';
 import CreateUser from './create';
 import DeleteUser from './delete';
 import ResetUserPassword from './reset-password';
-import UnauthorizedForUser from './unauthorized';
 import UpdateUser from './update';
 
 interface Props {
     users: User[];
+    aux: { roles: Record<string, string> };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -26,7 +26,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-function Index({ users }: Props) {
+function Index({ users, aux }: Props) {
+    console.debug('aux', aux);
+
     const [selectedUser, setSelectedUser] = useState<User>(users[0]);
     const [createUserOpen, setCreateUserOpen] = useState(false);
     const [resetPasswordAlertOpen, setResetPasswordAlertOpen] = useState(false);
@@ -69,49 +71,27 @@ function Index({ users }: Props) {
             <AlertDialog open={createUserOpen} onOpenChange={setCreateUserOpen}>
                 <AlertDialogContent>
                     <AlertDialogTitle>Datos del Nuevo Usuario</AlertDialogTitle>
-                    <CreateUser />
+                    <CreateUser roles={aux.roles} />
                 </AlertDialogContent>
             </AlertDialog>
 
             <AlertDialog open={resetPasswordAlertOpen} onOpenChange={setResetPasswordAlertOpen}>
                 <AlertDialogContent>
-                    {auth.can.user.update ? (
-                        <>
-                            <AlertDialogTitle>Restablecer Contraseña</AlertDialogTitle>
-                            <ResetUserPassword user={selectedUser} />
-                        </>
-                    ) : (
-                        <UnauthorizedForUser closeAlert={() => setResetPasswordAlertOpen(false)}>
-                            <p>No tienes permisos para restablecer la contraseña de este usuario.</p>
-                        </UnauthorizedForUser>
-                    )}
+                    <AlertDialogTitle>Restablecer Contraseña</AlertDialogTitle>
+                    <ResetUserPassword user={selectedUser} />
                 </AlertDialogContent>
             </AlertDialog>
 
             <AlertDialog open={editAlertOpen} onOpenChange={setEditAlertOpen}>
                 <AlertDialogContent>
-                    {auth.can.user.update ? (
-                        <>
-                            <AlertDialogTitle>Actualizar información de usuario</AlertDialogTitle>
-                            <UpdateUser user={selectedUser} />
-                        </>
-                    ) : (
-                        <UnauthorizedForUser closeAlert={() => setEditAlertOpen(false)}>
-                            <p>No tienes permisos para restablecer la contraseña de este usuario.</p>
-                        </UnauthorizedForUser>
-                    )}
+                    <AlertDialogTitle>Actualizar información de usuario</AlertDialogTitle>
+                    <UpdateUser user={selectedUser} />
                 </AlertDialogContent>
             </AlertDialog>
 
             <AlertDialog open={deleteAlertOpen} onOpenChange={setDeleteAlertOpen}>
                 <AlertDialogContent>
-                    {auth.can.user.delete ? (
-                        <DeleteUser user={selectedUser} />
-                    ) : (
-                        <UnauthorizedForUser closeAlert={() => setDeleteAlertOpen(false)}>
-                            <p>No tienes permisos para eliminar este usuario.</p>
-                        </UnauthorizedForUser>
-                    )}
+                    <DeleteUser user={selectedUser} />
                 </AlertDialogContent>
             </AlertDialog>
         </AppLayout>

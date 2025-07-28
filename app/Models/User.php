@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Role;
 
 class User extends Authenticatable
 {
@@ -21,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**
@@ -30,7 +33,11 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'remember_token',
+        'password',
+        'role_id'
     ];
+
+    protected $with = ['role'];
 
     /**
      * Get the attributes that should be cast.
@@ -42,5 +49,11 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
     }
 }

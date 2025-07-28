@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Register;
+use App\Models\Role;
 use App\Http\Requests\Models\Register\StoreRegisterRequest;
 use App\Http\Requests\Models\Register\UpdateRegisterRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Arr;
 
 class RegisterController extends Controller
 {
@@ -17,11 +19,14 @@ class RegisterController extends Controller
     public function index(Request $request)
     {
         $entityType = $request->query('entity');
+        $filter = ['owner_id' => Auth::user()->id];
 
-        $registers = $entityType !== null
-            ? Register::where(['type' => $entityType])
-            ->get()
-            : Register::all();
+        if ($entityType !== null) {
+            $filter['type'] = $entityType;
+        }
+
+        $registers = Register::where($filter)
+            ->get();
 
         if (! Auth::user()->can('viewAny', Register::class)) {
             abort(403, 'Permisos insuficientes.');
@@ -66,7 +71,7 @@ class RegisterController extends Controller
     /**
      * Check if the user can update the register
      */
-    public function checkCanUpdate(Register $register) 
+    public function checkCanUpdate(Register $register)
     {
         return response()->json([
             'canEdit' => Auth::user()->can('update', $register)

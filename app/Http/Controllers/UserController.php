@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Models\User\StoreUserRequest;
 use App\Http\Requests\Models\User\UpdateUserRequest;
-use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -20,7 +21,11 @@ class UserController extends Controller
         if (!Auth::user()?->can('viewAny', User::class)) {
             abort(403, 'Permisos insuficientes.');
         }
-        return inertia('models/user/index', ["users" => User::where('id', '!=', Auth::id())->get()]);
+
+        return inertia('models/user/index', [
+            'users' => User::where('id', '!=', Auth::id())->get(),
+            'aux' => ['roles' => Role::all()->pluck('name', 'id')->toArray()],
+        ]);
     }
 
     /**
@@ -44,10 +49,12 @@ class UserController extends Controller
         }
 
         $validated = $request->validated();
+
         User::create([
             'email' => $validated['email'],
             'name' => $validated['name'],
             'password' => Hash::make($validated['password']),
+            'role_id' => $validated['role_id'],
         ]);
 
         return to_route('user.index');

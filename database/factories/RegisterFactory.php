@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Register>
@@ -27,6 +27,7 @@ class RegisterFactory extends Factory
             'login' => $login,
             'password' => $password,
             'notes' => $this->faker->optional()->paragraph,
+            'owner_id' => User::inRandomOrder()->first()->id
         ];
     }
 }
