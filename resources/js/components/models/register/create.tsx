@@ -20,7 +20,7 @@ function CreateRegister({ entityType }: Props) {
         password_confirmation: '',
         type: entityType ?? '',
         notes: '',
-    } satisfies Omit<Register, 'id' | 'created_at' | 'updated_at'> & { password_confirmation: string });
+    } satisfies Omit<Register, 'id' | 'created_at' | 'updated_at' | 'owner'> & { password_confirmation: string });
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -54,7 +54,13 @@ function CreateRegister({ entityType }: Props) {
                     </SelectContent>
                 </Select>
             </div>
-            <InputWithLabel label="Login *" name="login" value={data.login} onChange={(e) => setData('login', e.target.value)} />
+            <InputWithLabel
+                label="Login *"
+                name="login"
+                type={data.type === 'email' ? 'email' : 'text'}
+                value={data.login}
+                onChange={(e) => setData('login', e.target.value)}
+            />
             <div className="col-span-full flex flex-wrap gap-y-4">
                 <div className="flex gap-4">
                     <div className="basis-1/2">
