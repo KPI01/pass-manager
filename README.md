@@ -1,21 +1,27 @@
-# Gestor de Claves
+# Password Manager
 
-Esta aplicación permite gestionar las claves, tanto de usuarios como de cuentas de correo, de forma segura. También se mostrará el historial de contraseñas del registro respectivo y la antigüedad de la clave.
+This application allows you to securely manage passwords for both users and email accounts. It also displays the password history for the respective record and the password age.
 
-En un futuro, se buscará almacenar los Two Factor Authenticator y relacionarlos con los respectivos registros, al igual que un generador de contraseñas con patrones personalizados.
+In the future, we will be looking to store Two Factor Authenticators and link them to the respective records, as well as a password generator with custom patterns.
 
-## Instalación
+## Installation
 
-1. Instalar las dependencias de la aplicación: `composer install`, y luego, `pnpm install`
-2. Crear archivo `.env` copiando y pegando el `.env.example` en el directorio raíz de la aplicación
-3. Generar key de Laravel: `php artisan key:generate`
-4. Crear la base de datos: `php artisan migrate`
-5. Crear un usuario administrador
-    - Puede ser con el seeder: `php artisan db:seed`
-    - O con el comando: `php artisan tinker` y colocar las credenciales deseadas
-6. Ejecuar el proyecto: `php artisan serve`, y en otra terminal, `pnpm run dev`
+1. Install the application dependencies: `composer install`, then `pnpm install`
+2. Create a `.env` file by copying and pasting `.env.example` into the application root directory
+3. Generate Laravel key: `php artisan key:generate`
+4. Create the database: `php artisan migrate`
+5. Create an administrator user
 
-## Documentación externa
+- This can be done with the seeder: `php artisan db:seed`
+- Or with the command: `php artisan tinker` and enter the desired credentials
+
+6. Run the project: `php artisan serve`, and in another terminal, `pnpm run dev`
+
+## Documentation
+
+- [Here](./docs/models.md) you can find a file that explains the compositions of the models
+
+### External Libraries
 
 - [Shadcn/ui](https://ui.shadcn.com/docs)
 - [Tailwind CSS](https://tailwindcss.com/docs)

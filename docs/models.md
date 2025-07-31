@@ -1,67 +1,108 @@
-# Modelos
+# Models
 
 ## User
 
-Modelo que representa un usuario que puede autenticarse en la aplicación.
+Model that represents a user who can authenticate to the application.
 
-### Campos
+### Fields
 
-| Campo          | Tipo      | Descripción                                        |
-| -------------- | --------- | -------------------------------------------------- |
-| id             | integer   | Identificador único del registro.                  |
-| created_at     | timestamp | Fecha y hora de creación del registro.             |
-| updated_at     | timestamp | Fecha y hora de actualización del registro.        |
-| name           | string    | Nombre del usuario.                                |
-| email          | string    | Correo electrónico del usuario.                    |
-| password       | string    | Contraseña encriptada.                             |
-| remember_token | string    | Token de recuerdo para el inicio de sesión.        |
-| role_id        | integer   | Identificador del rol al que pertenece el usuario. |
+| Field          | Type      | Description                                       |
+| -------------- | --------- | ------------------------------------------------- |
+| id             | integer   | Unique record identifier.                         |
+| created_at     | timestamp | Date and time the record was created.             |
+| updated_at     | timestamp | Date and time the record was updated.             |
+| name           | string    | User's name.                                      |
+| email          | string    | User's email address.                             |
+| password       | string    | Encrypted password.                               |
+| remember_token | string    | Remembered token for login.                       |
+| role_id        | integer   | Identifier of the role to which the user belongs. |
+
+### Relationships
+
+- `role`: defines to which role belongs the user.
 
 ## Role
 
-Modelo que representa el rol que cumple el usuario dentro de la aplicación. Este permitirá autorizar o no las diferentes acciones que intente realizar el usuario.
+Model that represents the role the user plays within the application. This will allow you to authorize or deny the different actions the user attempts to perform.
 
-### Campos
+### Fields
 
-| Campo        | Tipo      | Descripción                            |
-| ------------ | --------- | -------------------------------------- |
-| id           | integer   | Identificador único.                   |
-| created_at   | timestamp | Fecha y hora de creación del rol.      |
-| updated_at   | timestamp | Fecha y hora de actualización del rol. |
-| name         | string    | Nombre del rol.                        |
-| short        | string    | Nombre corto del rol.                  |
-| ?permissions | json      | Permisos que se le asignan al rol.     |
+| Field      | Type      | Description                         |
+| ---------- | --------- | ----------------------------------- |
+| id         | integer   | Unique identifier.                  |
+| created_at | timestamp | Date and time the role was created. |
+| updated_at | timestamp | Date and time the role was updated. |
+| name       | string    | Name of the role.                   |
+| short      | string    | Short name of the role.             |
+
+### Relationships
+
+- `users`: relations that define which users belongs to each role.
+
+### Ideas
+
+- Add a `permissions` field that contains a json and the specific permissions for the role
 
 ## Register
 
-Recurso que representa un registro almacenado dentro de la aplicación, este puede ser un usuario o cuenta de correo electrónico.
+A resource that represents a record stored within the application; this can be a user or email account.
 
-### Campos
+### Fields
 
-| Campo       | Tipo      | Descripción                                 |
-| ----------- | --------- | ------------------------------------------- |
-| id          | integer   | Identificador único del registro.           |
-| created_at  | timestamp | Fecha y hora de creación del registro.      |
-| updated_at  | timestamp | Fecha y hora de actualización               |
-| description | string    | Descripción del registro.                   |
-| type        | enum      | Tipo de registro. ['user','email']          |
-| login       | string    | Nombre de usuario o correo electrónico.     |
-| password    | string    | Contraseña actual encriptada.               |
-| notes       | text      | Notas adicionales sobre el registro.        |
-| owner_id    | integer   | Identificador del propietario del registro. |
+| Field       | Type      | Description                           |
+| ----------- | --------- | ------------------------------------- |
+| id          | integer   | Unique identifier for the record.     |
+| created_at  | timestamp | Date and time the record was created. |
+| updated_at  | timestamp | Date and time it was updated.         |
+| description | string    | Description of the record.            |
+| type        | enum      | Record type. ['user','email']         |
+| login       | string    | Username or email address.            |
+| password    | string    | Current encrypted password.           |
+| notes       | text      | Additional notes about the record.    |
+| owner_id    | integer   | Identifier of the record owner.       |
+
+### Relationships
+
+- `owner`: defines who has created the record so that it will belong to that user.
+- `changes`: keep record of changes made for the record
+
+### Methods
+
+Customized methods that were declared to implement advanced functionality.
+
+#### Setters
+
+- `setLoginAttribute`: encrypts the value before being saved on the database.
+- `setPasswordAttribute`: encrypts the value before being saved on the database.
+
+#### Getters
+
+- `getLoginAttribute`: returns the login attribute decrypted.
+
+### Routes
+
+It uses the resource model of Laravel with a few adjustments.
+
+- `GET: index`: shows a table with all the records that can see the user.
+- `POST: store`: creates a new record.
+- `DELETE: destroy`: deletes a record.
+- `PUT|PATCH: update`: updates a record.
+- `POST: reveal-password`: endpoint that retrieves the password decrypted.
+- `POST: check-can-update`: validates from the front-end if an user can update a register.
+- `POST: get-changes`: endpoint that retrieves all changes made to a specific register.
 
 ## Change
 
-Modelo que representa un histórico de cambio en los registros almacenados.
+Model that represents a history of changes to stored records.
 
-### Campos
+### Fields
 
-| Campo       | Tipo      | Descripción                                                        |
-| ----------- | --------- | ------------------------------------------------------------------ |
-| id          | integer   | Identificador único del registro.                                  |
-| created_at  | timestamp | Fecha y hora de creación del registro.                             |
-| made_by     | integer   | Identificador del usuario que realizó el cambio.                   |
-| register_id | integer   | Identificador del registro modificado.                             |
-| action      | enum      | Acción realizada sobre el registro. ['creation','update','delete'] |
-| old         | string    | Valor antiguo del registro modificado.                             |
-| new         | string    | Nuevo valor del registro modificado.                               |
+| Field       | Type      | Description                                                    |
+| ----------- | --------- | -------------------------------------------------------------- |
+| id          | integer   | Unique identifier for the record.                              |
+| created_at  | timestamp | Date and time the record was created.                          |
+| made_by     | integer   | Identifier of the user who made the change.                    |
+| register_id | integer   | Identifier of the modified record.                             |
+| action      | enum      | Action performed on the record. ['creation','update','delete'] |
+| old         | string    | Old value of the modified record.                              |
+| new         | string    | New value of the modified record.                              |
