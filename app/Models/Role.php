@@ -19,6 +19,11 @@ class Role extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
+
+    /**
+     * Relation to the user model.
+     * @return HasMany  
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
