@@ -21,7 +21,7 @@ class RegisterPolicy
      */
     public function view(User $user, Register $register): bool
     {
-        return false;
+        return true;
     }
 
     /**

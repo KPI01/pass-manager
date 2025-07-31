@@ -1,22 +1,24 @@
 import { DataTableViewOptions } from '@/components/data-table/column-toggle';
 import { DataTableColumnHeader } from '@/components/data-table/header';
+import { DataTable } from '@/components/data-table/table';
+import { buttonVariants } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Register, User } from '@/types/models';
-import { createColumnHelper } from '@tanstack/react-table';
-import { Copy, Ellipsis, Key, PenBox, TextSearch, Trash } from 'lucide-react';
+import { Change, Register, User } from '@/types/models';
+import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
+import { Copy, Ellipsis, History, Key, PenBox, TextSearch, Trash } from 'lucide-react';
 import { toast } from 'sonner';
+import { transformDateString } from '../utils';
 import { getRegisterPassword } from './register/get-password';
 
 type UserColumnParams = {
     currentUserId?: number;
     selectUser: (id: number) => void;
-    resetPasswordAlert: (open: boolean) => void;
-    editAlert: (open: boolean) => void;
-    deleteAlert: (open: boolean) => void;
+    actions: Record<string, (open: boolean) => void>;
 };
 
 const userColHelper = createColumnHelper<User>();
-export const userColumn = ({ currentUserId, selectUser, resetPasswordAlert, editAlert, deleteAlert }: UserColumnParams) => [
+export const userColumn = ({ currentUserId, selectUser, actions }: UserColumnParams) => [
     userColHelper.accessor('email', {
         id: 'Correo',
         header: ({ column }) => <DataTableColumnHeader title="Correo" column={column} />,
@@ -67,7 +69,7 @@ export const userColumn = ({ currentUserId, selectUser, resetPasswordAlert, edit
                     <DropdownMenuItem
                         onClick={() => {
                             selectUser(row.original.id);
-                            resetPasswordAlert(true);
+                            actions.resetPasswordAlert(true);
                         }}
                     >
                         <Key />
@@ -76,7 +78,7 @@ export const userColumn = ({ currentUserId, selectUser, resetPasswordAlert, edit
                     <DropdownMenuItem
                         onClick={() => {
                             selectUser(row.original.id);
-                            editAlert(true);
+                            actions.editAlert(true);
                         }}
                     >
                         <PenBox />
@@ -88,7 +90,7 @@ export const userColumn = ({ currentUserId, selectUser, resetPasswordAlert, edit
                             <DropdownMenuItem
                                 onClick={() => {
                                     selectUser(row.original.id);
-                                    deleteAlert(true);
+                                    actions.deleteAlert(true);
                                 }}
                                 className="text-destructive focus:bg-destructive/20 focus:text-destructive"
                             >
@@ -103,13 +105,14 @@ export const userColumn = ({ currentUserId, selectUser, resetPasswordAlert, edit
     }),
 ];
 
+type RegisterColumnParams = {
+    selectionHandler: (id: number) => void;
+    token: string;
+    entity?: 'user' | 'email';
+    actions: Record<string, (open: boolean) => void>;
+};
 const registerColHelper = createColumnHelper<Register>();
-export const registerColumn = (
-    selectionHandler: (id: number) => void,
-    token: string,
-    entity?: 'user' | 'email',
-    changers: Record<string, (open: boolean) => void> = {},
-) => {
+export const registerColumn = ({ selectionHandler, token, entity, actions }: RegisterColumnParams) => {
     let type = ['email', 'user'].find((type) => entity === type);
     type = type ? type.charAt(0).toUpperCase() + type.slice(1) : 'Login';
 
@@ -131,14 +134,7 @@ export const registerColumn = (
         registerColHelper.accessor('created_at', {
             id: 'Creación',
             header: ({ column }) => <DataTableColumnHeader title="Fecha de creación" column={column} />,
-            cell: ({ getValue }) =>
-                new Date(getValue()).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                }),
+            cell: ({ getValue }) => transformDateString(getValue()),
         }),
         registerColHelper.display({
             id: 'actions',
@@ -182,18 +178,26 @@ export const registerColumn = (
                         <DropdownMenuItem
                             onClick={() => {
                                 selectionHandler(row.original.id);
-                                changers.setShowAlert(true);
+                                actions.setShowAlert(true);
                             }}
                         >
                             <TextSearch />
                             Más detalles
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                selectionHandler(row.original.id);
+                                actions.setHistoryAlert(true);
+                            }}
+                        >
+                            <History className="text-inherit" /> Cambios
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             className="text-destructive focus:bg-destructive/20 focus:text-destructive"
                             onClick={() => {
                                 selectionHandler(row.original.id);
-                                changers.setDeleteAlert(true);
+                                actions.setDeleteAlert(true);
                             }}
                         >
                             <Trash className="text-inherit" />
@@ -205,3 +209,123 @@ export const registerColumn = (
         }),
     ];
 };
+
+type ChangeDetail = {
+    attribute: string;
+    value: unknown;
+};
+let changeDetailColumns: ColumnDef<ChangeDetail>[] = [
+    {
+        id: 'Atributo',
+        header: 'Atributo',
+        accessorKey: 'attribute',
+    },
+    {
+        id: 'Valor',
+        header: 'Valor',
+        accessorKey: 'value',
+        cell: ({ getValue }) => String(getValue()),
+    },
+];
+const registerChangesHelper = createColumnHelper<Change>();
+export const registerChangeColumns = [
+    registerChangesHelper.accessor('id', {
+        id: 'Nro.',
+        header: 'ID',
+        enableHiding: false,
+    }),
+    registerChangesHelper.accessor('created_at', {
+        id: 'Realizado',
+        header: ({ column }) => <DataTableColumnHeader title="Fecha" column={column} />,
+        cell: ({ getValue }) => transformDateString(getValue()),
+        enableHiding: false,
+    }),
+    registerChangesHelper.accessor('action', {
+        id: 'Acción',
+        header: ({ column }) => <DataTableColumnHeader title="Acción" column={column} />,
+        cell: ({ row }) => (row.original.action === 'creation' ? 'Creación' : 'Modificación'),
+        enableHiding: false,
+    }),
+    registerChangesHelper.accessor('made_by.email', {
+        id: 'Usuario',
+        header: 'Correo',
+        enableHiding: false,
+    }),
+    registerChangesHelper.accessor('old', {
+        id: 'Anterior',
+        header: 'Valor anterior',
+        enableHiding: false,
+        cell: ({ row }) => {
+            const { original } = row;
+            let details: ChangeDetail[] = [];
+
+            if (!original.old) return undefined;
+
+            const val = JSON.parse(original.old);
+            console.debug('val', val);
+            const keys = Object.keys(val);
+
+            keys.forEach((key) => {
+                console.debug('key', key);
+                console.debug('val[key]', val[key]);
+
+                details.push({
+                    attribute: key
+                        .replaceAll('_', ' ')
+                        .split(' ')
+                        .map((word) => word[0].toUpperCase() + word.slice(1))
+                        .join(' '),
+                    value: val[key],
+                });
+            });
+
+            return (
+                <Dialog>
+                    <DialogTrigger className={buttonVariants({ variant: 'outline', size: 'sm', className: 'text-xs' })}>Ver</DialogTrigger>
+                    <DialogContent className="!min-h-fit !max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle>Valores anteriores</DialogTitle>
+                        </DialogHeader>
+                        <DataTable columns={changeDetailColumns} data={details} disableFooter />
+                    </DialogContent>
+                </Dialog>
+            );
+        },
+    }),
+    registerChangesHelper.accessor('new', {
+        id: 'Nuevo',
+        header: 'Valor nuevo',
+        enableHiding: false,
+        cell: ({ row }) => {
+            const { original } = row;
+            let details: ChangeDetail[] = [];
+
+            if (!original.new) return undefined;
+
+            const val = JSON.parse(original.new);
+            const keys = Object.keys(val);
+
+            keys.forEach((key) => {
+                details.push({
+                    attribute: key
+                        .replaceAll('_', ' ')
+                        .split(' ')
+                        .map((word) => word[0].toUpperCase() + word.slice(1))
+                        .join(' '),
+                    value: val[key],
+                });
+            });
+            return (
+                <Dialog>
+                    <DialogTrigger className={buttonVariants({ variant: 'outline', size: 'sm', className: 'text-xs' })}>Ver</DialogTrigger>
+                    <DialogContent className="!max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle>Nuevos valores</DialogTitle>
+                        </DialogHeader>
+                        <DataTable columns={changeDetailColumns} data={details} disableFooter />
+                    </DialogContent>
+                </Dialog>
+            );
+        },
+    }),
+] as ColumnDef<Change>[];

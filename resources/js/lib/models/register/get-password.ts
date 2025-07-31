@@ -6,7 +6,7 @@ type ResponseData = {
 
 export async function getRegisterPassword(registerId: number, token: string): Promise<ResponseData> {
     try {
-        const response = await fetch(`/registers/${registerId}/reveal-password`, {
+        const res = await fetch(`/registers/${registerId}/reveal-password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -14,16 +14,16 @@ export async function getRegisterPassword(registerId: number, token: string): Pr
             },
         });
 
-        if (!response.ok) {
+        if (!res.ok) {
             // Manejar diferentes tipos de errores HTTP
-            if (response.status === 403) {
+            if (res.status === 403) {
                 return {
                     status: 'error',
                     error: 'No tienes permisos para acceder a esta contraseña'
                 };
             }
             
-            if (response.status === 404) {
+            if (res.status === 404) {
                 return {
                     status: 'error',
                     error: 'Registro no encontrado'
@@ -32,11 +32,11 @@ export async function getRegisterPassword(registerId: number, token: string): Pr
 
             return {
                 status: 'error',
-                error: `Error del servidor: ${response.status}`
+                error: `Error del servidor: ${res.status}`
             };
         }
 
-        const data: ResponseData = await response.json();
+        const data: ResponseData = await res.json();
         return data;
 
     } catch (error) {

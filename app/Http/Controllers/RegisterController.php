@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Register;
-use App\Models\Role;
 use App\Http\Requests\Models\Register\StoreRegisterRequest;
 use App\Http\Requests\Models\Register\UpdateRegisterRequest;
+use App\Models\Change;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Arr;
 
 class RegisterController extends Controller
 {
@@ -43,11 +42,38 @@ class RegisterController extends Controller
      */
     public function store(StoreRegisterRequest $request)
     {
+        if (! Auth::user()->can('create', Register::class)) {
+            abort(403, 'Permisos insuficientes.');
+        };
+
         $validated = $request->validated();
 
         Register::create($validated);
 
         return to_route('registers.index');
+    }
+
+    /**
+     * Get the changes made to the register
+     */
+    public function getChanges(Register $register)
+    {
+        if (! Auth::user()->can('view', $register)) {
+            return response()->json([
+                'status' => 'error',
+                'error' => 'No tienes permisos para ver este recurso.'
+            ]);
+        }
+
+        $history = Change::where('register_id', $register->id)
+            ->where('action', '!=', 'delete')
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return response()->json([
+            'status' => 'success',
+            'history' => $history
+        ]);
     }
 
     /**

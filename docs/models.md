@@ -23,13 +23,14 @@ Modelo que representa el rol que cumple el usuario dentro de la aplicación. Est
 
 ### Campos
 
-| Campo      | Tipo      | Descripción                            |
-| ---------- | --------- | -------------------------------------- |
-| id         | integer   | Identificador único.                   |
-| created_at | timestamp | Fecha y hora de creación del rol.      |
-| updated_at | timestamp | Fecha y hora de actualización del rol. |
-| name       | string    | Nombre del rol.                        |
-| short      | string    | Nombre corto del rol.                  |
+| Campo        | Tipo      | Descripción                            |
+| ------------ | --------- | -------------------------------------- |
+| id           | integer   | Identificador único.                   |
+| created_at   | timestamp | Fecha y hora de creación del rol.      |
+| updated_at   | timestamp | Fecha y hora de actualización del rol. |
+| name         | string    | Nombre del rol.                        |
+| short        | string    | Nombre corto del rol.                  |
+| ?permissions | json      | Permisos que se le asignan al rol.     |
 
 ## Register
 
@@ -48,3 +49,19 @@ Recurso que representa un registro almacenado dentro de la aplicación, este pue
 | password    | string    | Contraseña actual encriptada.               |
 | notes       | text      | Notas adicionales sobre el registro.        |
 | owner_id    | integer   | Identificador del propietario del registro. |
+
+## Change
+
+Modelo que representa un histórico de cambio en los registros almacenados.
+
+### Campos
+
+| Campo       | Tipo      | Descripción                                                        |
+| ----------- | --------- | ------------------------------------------------------------------ |
+| id          | integer   | Identificador único del registro.                                  |
+| created_at  | timestamp | Fecha y hora de creación del registro.                             |
+| made_by     | integer   | Identificador del usuario que realizó el cambio.                   |
+| register_id | integer   | Identificador del registro modificado.                             |
+| action      | enum      | Acción realizada sobre el registro. ['creation','update','delete'] |
+| old         | string    | Valor antiguo del registro modificado.                             |
+| new         | string    | Nuevo valor del registro modificado.                               |

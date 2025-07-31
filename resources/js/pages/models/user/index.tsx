@@ -9,10 +9,10 @@ import { usePage } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
-import CreateUser from './create';
-import DeleteUser from './delete';
-import ResetUserPassword from './reset-password';
-import UpdateUser from './update';
+import CreateUser from '../../../components/models/user/create';
+import DeleteUser from '../../../components/models/user/delete';
+import ResetUserPassword from '../../../components/models/user/reset-password';
+import UpdateUser from '../../../components/models/user/update';
 
 interface Props {
     users: User[];

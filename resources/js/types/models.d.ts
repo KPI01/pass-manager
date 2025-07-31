@@ -24,3 +24,11 @@ export type Register = {
     notes?: string;
     owner: User;
 } & BaseModel;
+
+export type Change = {
+    action: 'creation' | 'update' | 'delete';
+    made_by: User;
+    register: Register;
+    old?: string;
+    new?: string;
+} & Omit<BaseModel, 'updated_at'>;

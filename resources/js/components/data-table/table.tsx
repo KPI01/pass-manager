@@ -18,9 +18,11 @@ import { DataTablePagination } from './pagination';
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    disableFooter?: boolean;
+    disablePageSize?: boolean;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, disableFooter = false, disablePageSize = false }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = useState({});
@@ -76,7 +78,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                         )}
                     </TableBody>
                 </Table>
-                <DataTablePagination table={table} />
+                {!disableFooter && <DataTablePagination table={table} disablePageSize={disablePageSize} />}
             </div>
         </div>
     );
