@@ -2,10 +2,10 @@
 
 ## Registers
 
-The url for this pages is `/registers` and it also accepts a query parameter `entity` to allow the user to filter by entity type. The navigation bar by default have to links that each one uses an specific entity type, to see all the records you will have to acces via the breadcrumbs.
+The url for this pages is `/register` and it also accepts a query parameter `entity` to allow the user to filter by entity type. The navigation bar by default have to links that each one uses an specific entity type, to see all the records you will have to acces via the breadcrumbs.
 
-- `/registers?entity=user`: filter just the type of users in the Register model.
-- `/registers?entity=email`: filter just the type of emails in the Register model.
+- `/register?entity=user`: filter just the type of users in the Register model.
+- `/register?entity=email`: filter just the type of emails in the Register model.
 
 Internally is the same page, just that the query parameter is used to filter. On each page you will be able to see the registers that you own and be able to handle them.
 

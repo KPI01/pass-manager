@@ -26,7 +26,7 @@ function CreateRegister({ entityType }: Props) {
         e.preventDefault();
 
         console.debug('sending form...');
-        post('/registers', {
+        post('/register', {
             preserveState: true,
             onSuccess: () => toast.success('Registro creado!'),
         });

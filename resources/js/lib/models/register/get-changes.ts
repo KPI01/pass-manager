@@ -19,7 +19,7 @@ type ResponseData = {
  */
 export async function getRegisterChanges({ registerId, token }: GetRegisterChangesParams) {
     try {
-        const res = await fetch(`/registers/${registerId}/changes`, {
+        const res = await fetch(`/register/${registerId}/changes`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

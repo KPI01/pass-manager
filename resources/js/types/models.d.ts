@@ -6,7 +6,7 @@ type BaseModel = {
 
 type Role = {
     name: string;
-    short: string;
+    short: 'user' | 'admin';
 } & BaseModel;
 
 export type User = {

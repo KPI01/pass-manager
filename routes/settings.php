@@ -22,5 +22,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::resource('user', UserController::class)->only(['index', 'create', 'store', 'update', 'destroy']);
+    Route::resource('user', UserController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::name('user.')->prefix('/user')->group(function () {
+        Route::post('{user}/get-role', [UserController::class, 'getRole'])->name('get-role');
+    });
 });

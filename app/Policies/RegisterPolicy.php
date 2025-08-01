@@ -21,7 +21,7 @@ class RegisterPolicy
      */
     public function view(User $user, Register $register): bool
     {
-        return true;
+        return $user->id === $register->owner->id;
     }
 
     /**
@@ -35,9 +35,9 @@ class RegisterPolicy
     /**
      * Determine whether the user can see the password of the model.
      */
-    public function seePassword(User $user): bool
+    public function seePassword(User $user, Register $register): bool
     {
-        return true;
+        return $user->id === $register->owner->id;
     }
 
     /**
@@ -45,7 +45,7 @@ class RegisterPolicy
      */
     public function update(User $user, Register $register): bool
     {
-        return true;
+        return $user->id === $register->owner->id;
     }
 
     /**
@@ -53,7 +53,7 @@ class RegisterPolicy
      */
     public function delete(User $user, Register $register): bool
     {
-        return true;
+        return $user->id === $register->owner->id;
     }
 
     /**

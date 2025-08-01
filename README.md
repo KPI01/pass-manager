@@ -1,6 +1,6 @@
 # Password Manager
 
-This application allows you to securely manage passwords for both users and email accounts. It also displays the password history for the respective record and the password age.
+This application allows you to securely manage passwords for both users and email accounts. It also allows to share the records with other users registered, displays the password history for the respective record and the password age.
 
 In the future, we will be looking to store Two Factor Authenticators and link them to the respective records, as well as a password generator with custom patterns.
 
@@ -19,7 +19,8 @@ In the future, we will be looking to store Two Factor Authenticators and link th
 
 ## Documentation
 
-- [Here](./docs/models.md) you can find a file that explains the compositions of the models
+- [Pages](./docs/pages.md)
+- [Models](./docs/models.md)
 
 ### External Libraries
 

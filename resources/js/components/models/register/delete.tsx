@@ -15,7 +15,7 @@ function DeleteRegister({ register }: Props) {
         e.preventDefault();
 
         console.debug('deleting register...');
-        destroy(`/registers/${register.id}`);
+        destroy(`/register/${register.id}`);
     };
 
     return (

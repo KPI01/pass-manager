@@ -6,7 +6,7 @@ type ResponseData = {
 
 export default async function checkCanUpdateRegister(registerId: number, token: string): Promise<ResponseData> {
     try {
-        const response = await fetch(`/registers/${registerId}/check-can-update`, {
+        const response = await fetch(`/register/${registerId}/check-can-update`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

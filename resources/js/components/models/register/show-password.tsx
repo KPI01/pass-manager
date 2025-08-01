@@ -81,7 +81,7 @@ function ShowRegisterPassword({ register }: Props) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        patch(`/registers/${register.id}`, {
+        patch(`/register/${register.id}`, {
             onSuccess: () => {
                 toast.success('La clave se ha actualizado correctamente.');
             },

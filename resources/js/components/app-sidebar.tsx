@@ -1,20 +1,23 @@
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { AtSign, BookOpen, Folder, IdCard, Users } from 'lucide-react';
+import { getUserRole } from '@/lib/models/user/get-role';
+import { SharedData, type NavItem } from '@/types';
+import { Role } from '@/types/models';
+import { Link, usePage } from '@inertiajs/react';
+import { AtSign, IdCard, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import AppLogo from './app-logo';
 
 const appNavItems: NavItem[] = [
     {
         title: 'Usuarios',
-        href: '/registers?entity=user',
+        href: '/register?entity=user',
         icon: Users,
     },
     {
         title: 'Correos',
-        href: '/registers?entity=email',
+        href: '/register?entity=email',
         icon: AtSign,
     },
 ];
@@ -26,20 +29,19 @@ const configNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
-
 export function AppSidebar() {
+    const [userRole, setUserRole] = useState<Role['short']>('user');
+
+    const { auth, token } = usePage<SharedData>().props;
+    console.debug(auth);
+
+    useEffect(() => {
+        getUserRole({ userId: auth.user.id, token }).then((data) => {
+            if (data.role) setUserRole(data.role);
+            return;
+        });
+    }, []);
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -56,7 +58,8 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain label="Navegación" items={appNavItems} />
-                <NavMain label="Configuración" items={configNavItems} />
+
+                {userRole === 'admin' && <NavMain label="Configuración" items={configNavItems} />}
             </SidebarContent>
 
             <SidebarFooter>

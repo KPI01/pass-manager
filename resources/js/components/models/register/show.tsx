@@ -36,7 +36,7 @@ function ShowRegister({ register }: Props) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        patch(`/registers/${register.id}`, {
+        patch(`/register/${register.id}`, {
             preserveScroll: true,
             onSuccess: () => {
                 toast.success('Registro actualizado correctamente.');

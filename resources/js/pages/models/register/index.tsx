@@ -36,7 +36,7 @@ function IndexRegister({ registers, entityType }: Props) {
     const [historyAlert, setHistoryAlert] = useState(false);
 
     let entity: string | undefined = ['email', 'user'].find((type) => entityType === type);
-    let breadcrumbs: BreadcrumbItem[] = [{ title: 'Registros', href: `/registers` }];
+    let breadcrumbs: BreadcrumbItem[] = [{ title: 'Registros', href: `/register` }];
 
     if (entity) {
         entity = entity === 'user' ? 'Usuarios' : 'Correos';

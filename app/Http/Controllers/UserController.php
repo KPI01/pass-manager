@@ -8,8 +8,6 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -26,17 +24,6 @@ class UserController extends Controller
             'users' => User::where('id', '!=', Auth::id())->get(),
             'aux' => ['roles' => Role::all()->pluck('name', 'id')->toArray()],
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        if (!Auth::user()?->can('create', User::class)) {
-            abort(403, 'Permisos insuficientes.');
-        }
-        return inertia('models/user/create');
     }
 
     /**
@@ -60,23 +47,7 @@ class UserController extends Controller
         return to_route('user.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
+     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateUserRequest $request, User $user)
@@ -104,5 +75,16 @@ class UserController extends Controller
         $user->delete();
 
         return to_route('user.index');
+    }
+
+    /**
+     * Get the role of a user.
+     */
+    public function getRole(User $user)
+    {
+        return response()->json([
+            'status' => 'success',
+            'role' => $user->role->short
+        ]);
     }
 }

@@ -6,7 +6,7 @@ type ResponseData = {
 
 export async function getRegisterPassword(registerId: number, token: string): Promise<ResponseData> {
     try {
-        const res = await fetch(`/registers/${registerId}/reveal-password`, {
+        const res = await fetch(`/register/${registerId}/reveal-password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -15,7 +15,6 @@ export async function getRegisterPassword(registerId: number, token: string): Pr
         });
 
         if (!res.ok) {
-            // Manejar diferentes tipos de errores HTTP
             if (res.status === 403) {
                 return {
                     status: 'error',

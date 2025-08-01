@@ -50,7 +50,7 @@ class RegisterController extends Controller
 
         Register::create($validated);
 
-        return to_route('registers.index');
+        return to_route('register.index');
     }
 
     /**
@@ -117,7 +117,7 @@ class RegisterController extends Controller
 
         $register->update($validated);
 
-        return to_route('registers.index');
+        return to_route('register.index');
     }
 
     /**
@@ -131,6 +131,6 @@ class RegisterController extends Controller
 
         $register->delete();
 
-        return to_route('registers.index');
+        return to_route('register.index');
     }
 }

@@ -6,7 +6,6 @@ import { userColumn } from '@/lib/models/column-definitions';
 import { BreadcrumbItem, SharedData } from '@/types';
 import { User } from '@/types/models';
 import { usePage } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CreateUser from '../../../components/models/user/create';
@@ -55,15 +54,11 @@ function Index({ users, aux }: Props) {
                     </div>
                 )}
                 <DataTable
-                    columns={
-                        userColumn({
-                            currentUserId: auth.user.id,
-                            selectUser: handleSelectedUser,
-                            resetPasswordAlert: setResetPasswordAlertOpen,
-                            editAlert: setEditAlertOpen,
-                            deleteAlert: setDeleteAlertOpen,
-                        }) as ColumnDef<User>[]
-                    }
+                    columns={userColumn({
+                        currentUserId: auth.user.id,
+                        selectUser: handleSelectedUser,
+                        actions: { resetPasswordAlert: setResetPasswordAlertOpen, editAlert: setEditAlertOpen, deleteAlert: setDeleteAlertOpen },
+                    })}
                     data={users}
                 />
             </div>
