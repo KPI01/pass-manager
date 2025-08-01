@@ -118,10 +118,6 @@ export const registerColumn = ({ selectionHandler, token, entity, actions }: Reg
     type = type ? type.charAt(0).toUpperCase() + type.slice(1) : 'Login';
 
     return [
-        registerColHelper.accessor('id', {
-            id: 'ID',
-            header: ({ column }) => <DataTableColumnHeader title="ID" column={column} />,
-        }),
         registerColHelper.accessor('description', {
             id: 'Descripción',
             header: ({ column }) => <DataTableColumnHeader title="Descripción" column={column} />,
