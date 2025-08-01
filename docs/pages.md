@@ -12,4 +12,3 @@ Internally is the same page, just that the query parameter is used to filter. On
 ## Users
 
 There are two types of page that can be accessed for this resource, one is the list of users registered to access the app and the other is the profile page for the user that is currently logged in. The navigation bar shows an element that points to the list of users registered, and there you will be able to create, modify and delete users. At the bottom of the navigation bar will be a button that shows a dropdown menu with the option *Profile* that will redirect you to the profile page for the user and handle its own information.
-
