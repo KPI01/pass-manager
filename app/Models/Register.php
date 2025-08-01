@@ -24,10 +24,12 @@ class Register extends Model
         'login',
         'password',
         'notes',
+        'owner_id'
     ];
 
     protected $hidden = [
-        'owner_id'
+        'owner_id',
+        'password'
     ];
 
     protected $with = ['owner'];
@@ -65,6 +67,16 @@ class Register extends Model
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = empty($value) ? '' : Crypt::encryptString($value);
+    }
+
+    /**
+     * Decrypts the value before getting it to know its content.
+     * @param string $value
+     * @return string
+     */
+    public function getPasswordAttribute(string $value): string
+    {
+        return empty($value) ? '' : Crypt::decryptString($value);
     }
 
     /**

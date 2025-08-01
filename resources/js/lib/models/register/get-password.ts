@@ -6,6 +6,7 @@ type ResponseData = {
 
 export async function getRegisterPassword(registerId: number, token: string): Promise<ResponseData> {
     try {
+        console.debug(`user: ${registerId}, token: ${token}`);
         const res = await fetch(`/register/${registerId}/reveal-password`, {
             method: 'POST',
             headers: {
@@ -18,31 +19,30 @@ export async function getRegisterPassword(registerId: number, token: string): Pr
             if (res.status === 403) {
                 return {
                     status: 'error',
-                    error: 'No tienes permisos para acceder a esta contraseña'
+                    error: 'No tienes permisos para acceder a esta contraseña',
                 };
             }
-            
+
             if (res.status === 404) {
                 return {
                     status: 'error',
-                    error: 'Registro no encontrado'
+                    error: 'Registro no encontrado',
                 };
             }
 
             return {
                 status: 'error',
-                error: `Error del servidor: ${res.status}`
+                error: `Error del servidor: ${res.status}`,
             };
         }
 
         const data: ResponseData = await res.json();
         return data;
-
     } catch (error) {
         console.error('Network error retrieving password:', error);
         return {
             status: 'error',
-            error: 'Error de conexión. Verifica tu internet.'
+            error: 'Error de conexión. Verifica tu internet.',
         };
     }
 }

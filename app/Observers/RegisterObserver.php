@@ -40,20 +40,19 @@ class RegisterObserver
                 $new = Arr::except($new, 'login');
             }
         }
-
-        if (Arr::has($old, 'password')) {
-            $old['password'] = Crypt::decryptString($old['password']);
-        }
-
         if (Arr::has($new, 'password')) {
             $new['password'] = Crypt::decryptString($new['password']);
+
+            if ($new['password'] === $old['password']) {
+                $new = Arr::except($new, 'password');
+            }
         }
 
         Change::create([
             'action' => 'update',
             'made_by' => Auth::id(),
             'register_id' => $register->id,
-            'old' => json_encode(Arr::only($old, array_keys($new))),
+            'old' => json_encode(Arr::except(Arr::only($old, array_keys($new)),['updated_at','created_at'])),
             'new' => json_encode($new),
         ]);
 
@@ -65,11 +64,19 @@ class RegisterObserver
      */
     public function deleted(Register $register): void
     {
+        $values = [];
+
+        foreach ($register->getOriginal() as $key => $value) {
+            $values[$key] = $value;
+        };
+
+        $values = Arr::except($values, ['id', 'updated_at', 'owner_id', 'owner']);
+
         Change::create([
             'action' => 'delete',
             'made_by' => Auth::id(),
             'register_id' => $register->id,
-            'old' => $register->toJson()
+            'old' => $values
         ]);
 
         return;

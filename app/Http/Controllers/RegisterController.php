@@ -8,7 +8,6 @@ use App\Http\Requests\Models\Register\UpdateRegisterRequest;
 use App\Models\Change;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 
 class RegisterController extends Controller
 {
@@ -47,6 +46,7 @@ class RegisterController extends Controller
         };
 
         $validated = $request->validated();
+        $validated['owner_id'] = Auth::id();
 
         Register::create($validated);
 
@@ -90,7 +90,7 @@ class RegisterController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'password' => Crypt::decryptString($register->password)
+            'password' => $register->password
         ]);
     }
 

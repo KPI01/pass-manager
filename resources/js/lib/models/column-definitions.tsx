@@ -225,16 +225,17 @@ let changeDetailColumns: ColumnDef<ChangeDetail>[] = [
         id: 'Valor',
         header: 'Valor',
         accessorKey: 'value',
-        cell: ({ getValue }) => String(getValue()),
+        cell: ({ getValue, row }) => {
+            if (['Created At', 'Updated At'].includes(row.original.attribute)) {
+                return transformDateString(String(getValue()));
+            }
+
+            return String(getValue());
+        },
     },
 ];
 const registerChangesHelper = createColumnHelper<Change>();
 export const registerChangeColumns = [
-    registerChangesHelper.accessor('id', {
-        id: 'Nro.',
-        header: 'ID',
-        enableHiding: false,
-    }),
     registerChangesHelper.accessor('created_at', {
         id: 'Realizado',
         header: ({ column }) => <DataTableColumnHeader title="Fecha" column={column} />,
@@ -245,6 +246,103 @@ export const registerChangeColumns = [
         id: 'Acción',
         header: ({ column }) => <DataTableColumnHeader title="Acción" column={column} />,
         cell: ({ row }) => (row.original.action === 'creation' ? 'Creación' : 'Modificación'),
+        enableHiding: false,
+    }),
+    registerChangesHelper.accessor('made_by.email', {
+        id: 'Usuario',
+        header: 'Correo',
+        enableHiding: false,
+    }),
+    registerChangesHelper.accessor('old', {
+        id: 'Anterior',
+        header: 'Valor anterior',
+        enableHiding: false,
+        cell: ({ row }) => {
+            const { original } = row;
+            let details: ChangeDetail[] = [];
+
+            if (!original.old) return undefined;
+
+            const val = JSON.parse(original.old);
+            console.debug('val', val);
+            const keys = Object.keys(val);
+
+            keys.forEach((key) => {
+                console.debug('key', key);
+                console.debug('val[key]', val[key]);
+
+                details.push({
+                    attribute: key
+                        .replaceAll('_', ' ')
+                        .split(' ')
+                        .map((word) => word[0].toUpperCase() + word.slice(1))
+                        .join(' '),
+                    value: val[key],
+                });
+            });
+
+            return (
+                <Dialog>
+                    <DialogTrigger className={buttonVariants({ variant: 'outline', size: 'sm', className: 'text-xs' })}>Ver</DialogTrigger>
+                    <DialogContent className="!min-h-fit !max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle>Valores anteriores</DialogTitle>
+                        </DialogHeader>
+                        <DataTable columns={changeDetailColumns} data={details} disableFooter />
+                    </DialogContent>
+                </Dialog>
+            );
+        },
+    }),
+    registerChangesHelper.accessor('new', {
+        id: 'Nuevo',
+        header: 'Valor nuevo',
+        enableHiding: false,
+        cell: ({ row }) => {
+            const { original } = row;
+            let details: ChangeDetail[] = [];
+
+            if (!original.new) return undefined;
+
+            const val = JSON.parse(original.new);
+            const keys = Object.keys(val);
+
+            keys.forEach((key) => {
+                details.push({
+                    attribute: key
+                        .replaceAll('_', ' ')
+                        .split(' ')
+                        .map((word) => word[0].toUpperCase() + word.slice(1))
+                        .join(' '),
+                    value: val[key],
+                });
+            });
+            return (
+                <Dialog>
+                    <DialogTrigger className={buttonVariants({ variant: 'outline', size: 'sm', className: 'text-xs' })}>Ver</DialogTrigger>
+                    <DialogContent className="!max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle>Nuevos valores</DialogTitle>
+                        </DialogHeader>
+                        <DataTable columns={changeDetailColumns} data={details} disableFooter />
+                    </DialogContent>
+                </Dialog>
+            );
+        },
+    }),
+] as ColumnDef<Change>[];
+
+export const logsColumns = [
+    registerChangesHelper.accessor('created_at', {
+        id: 'Realizado',
+        header: ({ column }) => <DataTableColumnHeader title="Fecha" column={column} />,
+        cell: ({ getValue }) => transformDateString(getValue()),
+        enableHiding: false,
+    }),
+    registerChangesHelper.accessor('action', {
+        id: 'Acción',
+        header: ({ column }) => <DataTableColumnHeader title="Acción" column={column} />,
+        cell: ({ row }) => (row.original.action === 'creation' ? 'Creación' : row.original.action === 'update' ? 'Modificación' : 'Eliminación'),
         enableHiding: false,
     }),
     registerChangesHelper.accessor('made_by.email', {

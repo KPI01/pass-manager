@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Arr;
 
 class Change extends Model
 {
@@ -35,11 +36,16 @@ class Change extends Model
 
     /**
      * Encrypts the value before saving it.
-     * @param string $value
+     * @param mixed $value
      * @return void
      */
-    public function setOldAttribute(string $value): void
+    public function setOldAttribute($value): void
     {
+        if (is_array($value)) {
+            $this->attributes['old'] = Crypt::encryptString(json_encode($value));
+            return;
+        }
+
         $this->attributes['old'] = empty($value) ? '' : Crypt::encryptString($value);
     }
 
@@ -48,27 +54,27 @@ class Change extends Model
      * @param string $value
      * @return string
      */
-    public function getOldAttribute(string $value): string
+    public function getOldAttribute($value): string
     {
         return empty($value) ? '' : Crypt::decryptString($value);
     }
 
     /**
      * Encrypts the value before saving it.
-     * @param string $value
+     * @param mixed $value
      * @return void
      */
-    public function setNewAttribute(string $value): void
+    public function setNewAttribute($value): void
     {
-        $this->attributes['new'] = Crypt::encryptString($value);
+        $this->attributes['new'] = empty($value) ? '' : Crypt::encryptString($value);
     }
 
     /**
      * Decrypts the value before getting it to know its content.
-     * @param string $value
+     * @param mixed $value
      * @return string
      */
-    public function getNewAttribute(string $value): string
+    public function getNewAttribute($value): string
     {
         return empty($value) ? '' : Crypt::decryptString($value);
     }

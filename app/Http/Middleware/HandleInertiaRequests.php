@@ -47,12 +47,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'can' => [
                     'user' => [
-                        'viewAny' => $request->user()?->can('viewAny', User::class),
                         'create' => $request->user()?->can('create', User::class),
-                    ],
-                    'register' => [
-                        'viewAny' => $request->user()?->can('viewAny', Register::class),
-                        'create' => $request->user()?->can('create', Register::class),
                     ],
                 ]
             ],

@@ -45,14 +45,14 @@ export function DataTable<TData, TValue>({ columns, data, disableFooter = false,
 
     return (
         <div className="grid space-y-4">
-            <div className="rounded-md border">
-                <Table>
+            <div className="overflow-auto rounded-md border">
+                <Table className="min-w-full">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead key={header.id} className="px-2 py-3 whitespace-nowrap">
                                             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                         </TableHead>
                                     );
@@ -65,7 +65,9 @@ export function DataTable<TData, TValue>({ columns, data, disableFooter = false,
                             table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                                        <TableCell key={cell.id} className="max-w-xs overflow-hidden px-2 py-3 break-words">
+                                            <div className="whitespace-normal">{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
+                                        </TableCell>
                                     ))}
                                 </TableRow>
                             ))

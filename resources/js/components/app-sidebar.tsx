@@ -5,7 +5,7 @@ import { getUserRole } from '@/lib/models/user/get-role';
 import { SharedData, type NavItem } from '@/types';
 import { Role } from '@/types/models';
 import { Link, usePage } from '@inertiajs/react';
-import { AtSign, IdCard, Users } from 'lucide-react';
+import { AtSign, FileText, IdCard, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AppLogo from './app-logo';
 
@@ -26,6 +26,11 @@ const configNavItems: NavItem[] = [
         title: 'Acceso',
         href: '/user',
         icon: IdCard,
+    },
+    {
+        title: 'Logs',
+        href: '/logs',
+        icon: FileText,
     },
 ];
 
@@ -59,7 +64,7 @@ export function AppSidebar() {
             <SidebarContent>
                 <NavMain label="Navegación" items={appNavItems} />
 
-                {userRole === 'admin' && <NavMain label="Configuración" items={configNavItems} />}
+                {userRole === 'admin' && <NavMain label="Avanzado" items={configNavItems} />}
             </SidebarContent>
 
             <SidebarFooter>
