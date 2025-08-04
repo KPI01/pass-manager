@@ -1,5 +1,6 @@
 import { InputToggleVisibility, InputWithLabel } from '@/components/forms/text-input';
 import { TextareaWithLabel } from '@/components/forms/textarea';
+import PasswordGenerator from '@/components/password-generator';
 import { AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,14 +14,14 @@ interface Props {
 }
 
 function CreateRegister({ entityType }: Props) {
-    const { data, setData, isDirty, hasErrors, post } = useForm({
+    const { data, setData, isDirty, hasErrors, post, errors } = useForm({
         description: '',
         login: '',
         password: '',
-        password_confirmation: '',
         type: entityType ?? '',
         notes: '',
-    } satisfies Omit<Register, 'id' | 'created_at' | 'updated_at' | 'owner'> & { password_confirmation: string });
+    } satisfies Omit<Register, 'id' | 'created_at' | 'updated_at' | 'owner'>);
+    if (errors) console.error(errors);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -61,9 +62,9 @@ function CreateRegister({ entityType }: Props) {
                 value={data.login}
                 onChange={(e) => setData('login', e.target.value)}
             />
-            <div className="col-span-full flex flex-wrap gap-y-4">
-                <div className="flex gap-4">
-                    <div className="basis-1/2">
+            <div className="col-span-full grid gap-y-4">
+                <div className="flex items-end gap-x-4">
+                    <div className="basis-full">
                         <InputToggleVisibility
                             label="Clave *"
                             name="password"
@@ -71,18 +72,10 @@ function CreateRegister({ entityType }: Props) {
                             onChange={(e) => setData('password', e.target.value)}
                         />
                     </div>
-                    <div className="basis-1/2">
-                        <InputToggleVisibility
-                            label="Confirmación de clave *"
-                            name="password_confirmation"
-                            value={data.password_confirmation}
-                            onChange={(e) => setData('password_confirmation', e.target.value)}
-                        />
-                    </div>
+                    <PasswordGenerator onValueChange={(v) => setData('password', v)} />
                 </div>
-                <div className="basis-full">
-                    <TextareaWithLabel label="Observaciones" value={data.notes ?? ''} onChange={(e) => setData('notes', e.target.value)} />
-                </div>
+
+                <TextareaWithLabel label="Observaciones" value={data.notes ?? ''} onChange={(e) => setData('notes', e.target.value)} />
             </div>
             <div className="col-span-full flex justify-end gap-4">
                 <AlertDialogCancel type="button">Cancelar</AlertDialogCancel>

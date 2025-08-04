@@ -28,7 +28,7 @@ class StoreRegisterRequest extends FormRequest
             'description' => ['required', 'max:255'],
             'type' => ['required', Rule::in(['user', 'email'])],
             'login' => ['required', 'max:150'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            'password' => ['required', 'min:8'],
             'notes' => ['nullable', 'max:350'],
         ];
     }
@@ -42,7 +42,6 @@ class StoreRegisterRequest extends FormRequest
             'login.required' => 'El login es requerido.',
             'password.required' => 'La contraseña es requerida.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
             'notes.max' => 'Las notas no pueden tener más de 350 caracteres.',
         ];
     }

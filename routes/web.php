@@ -8,7 +8,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return inertia('dashboard');
+        return to_route('register.index');
     })->name('dashboard');
 });
 
