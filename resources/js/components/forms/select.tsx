@@ -17,7 +17,6 @@ function Select({ options, tabIndex, ...props }: SelectProps) {
             </SelectTrigger>
             <SelectContent>
                 {values.map((val, ix) => {
-                    console.debug(ix, val, options[val]);
                     return (
                         <SelectItem key={ix} value={val}>
                             {options[val]}

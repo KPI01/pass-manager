@@ -260,13 +260,9 @@ export const registerChangeColumns = [
             if (!original.old) return undefined;
 
             const val = JSON.parse(original.old);
-            console.debug('val', val);
             const keys = Object.keys(val);
 
             keys.forEach((key) => {
-                console.debug('key', key);
-                console.debug('val[key]', val[key]);
-
                 details.push({
                     attribute: key
                         .replaceAll('_', ' ')
@@ -361,9 +357,6 @@ export const logsColumns = [
             const keys = Object.keys(val);
 
             keys.forEach((key) => {
-                console.debug('key', key);
-                console.debug('val[key]', val[key]);
-
                 details.push({
                     attribute: key
                         .replaceAll('_', ' ')

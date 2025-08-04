@@ -38,7 +38,7 @@ export default async function checkCanUpdateRegister(registerId: number, token: 
 
         return response.json();
     } catch (error) {
-        console.error('Network error retrieving password:', error);
+        console.error('network error retrieving password:', error);
         return {
             status: 'error',
             error: 'Error de conexión. Verifica tu internet.',

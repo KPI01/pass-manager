@@ -25,7 +25,6 @@ function ShowRegister({ register }: Props) {
             return;
         });
     }, []);
-    console.debug('canEdit', canEdit);
 
     const { data, setData, isDirty, patch, hasErrors, processing } = useForm({
         description: register.description,

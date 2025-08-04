@@ -38,7 +38,6 @@ export function AppSidebar() {
     const [userRole, setUserRole] = useState<Role['short']>('user');
 
     const { auth, token } = usePage<SharedData>().props;
-    console.debug(auth);
 
     useEffect(() => {
         getUserRole({ userId: auth.user.id, token }).then((data) => {

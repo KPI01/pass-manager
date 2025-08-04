@@ -44,7 +44,7 @@ export async function getUserRole({ userId, token }: GetUserRoleParams): Promise
         const data: ResponseData = await res.json();
         return data;
     } catch (err) {
-        console.error('Error making the request', err);
+        console.error('error making the request', err);
         return {
             status: 'error',
             error: String(err),

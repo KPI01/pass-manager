@@ -21,7 +21,6 @@ function ShowRegisterPassword({ register }: Props) {
     let [canEdit, setCanEdit] = useState(false);
     useEffect(() => {
         checkCanUpdateRegister(register.id, token).then((data) => {
-            console.debug('data', data);
             if (data.canEdit) setCanEdit(data.canEdit);
             return;
         });

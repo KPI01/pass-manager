@@ -11,7 +11,6 @@ interface Props {
 }
 
 function CreateUser({ roles }: Props) {
-    console.debug('roles', roles);
     const { data, setData, isDirty, post, reset, hasErrors, errors } = useForm({
         email: '',
         name: '',
@@ -19,13 +18,10 @@ function CreateUser({ roles }: Props) {
         role_id: 0,
         password_confirmation: '',
     } satisfies Omit<User, 'id' | 'created_at' | 'updated_at' | 'role'> & { password_confirmation: string; role_id?: number });
-
-    console.error('errors', errors);
+    if (errors) console.error('errors', errors);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        console.debug(data);
 
         post('/user', {
             onSuccess: () => {

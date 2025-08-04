@@ -26,8 +26,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 function Index({ users, aux }: Props) {
-    console.debug('aux', aux);
-
     const [selectedUser, setSelectedUser] = useState<User>(users[0]);
     const [createUserOpen, setCreateUserOpen] = useState(false);
     const [resetPasswordAlertOpen, setResetPasswordAlertOpen] = useState(false);
@@ -35,7 +33,6 @@ function Index({ users, aux }: Props) {
     const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
 
     const { auth } = usePage<SharedData>().props;
-    console.debug('auth', auth);
 
     const handleSelectedUser = (id: number) => {
         const user = users.find((user) => user.id === id);

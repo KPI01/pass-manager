@@ -14,7 +14,7 @@ function DeleteRegister({ register }: Props) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        console.debug('deleting register...');
+        console.info('deleting register...');
         destroy(`/register/${register.id}`);
     };
 

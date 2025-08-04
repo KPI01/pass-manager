@@ -6,7 +6,6 @@ type ResponseData = {
 
 export async function getRegisterPassword(registerId: number, token: string): Promise<ResponseData> {
     try {
-        console.debug(`user: ${registerId}, token: ${token}`);
         const res = await fetch(`/register/${registerId}/reveal-password`, {
             method: 'POST',
             headers: {
@@ -39,7 +38,7 @@ export async function getRegisterPassword(registerId: number, token: string): Pr
         const data: ResponseData = await res.json();
         return data;
     } catch (error) {
-        console.error('Network error retrieving password:', error);
+        console.error('network error retrieving password:', error);
         return {
             status: 'error',
             error: 'Error de conexión. Verifica tu internet.',

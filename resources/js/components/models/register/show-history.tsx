@@ -11,7 +11,6 @@ interface Props {
 
 function ShowHistory({ registerId, token }: Props) {
     const [history, setHistory] = useState<Change[]>([]);
-    console.debug('history', history);
 
     useEffect(() => {
         getRegisterChanges({ registerId, token }).then((data) => {

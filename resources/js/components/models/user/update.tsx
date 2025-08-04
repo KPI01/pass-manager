@@ -13,7 +13,7 @@ function UpdateUser({ user }: Props) {
         email: user.email,
         name: user.name,
     } satisfies Pick<User, 'email' | 'name'>);
-    console.error('errors', errors);
+    if (errorconsole.error('errors', errors);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
