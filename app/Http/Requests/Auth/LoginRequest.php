@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'email', 'exists:users,email'],
             'password' => ['required', 'string'],
         ];
     }
@@ -45,7 +45,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => __('auth.failed', [], env('APP_LOCALE')),
             ]);
         }
 
@@ -71,7 +71,7 @@ class LoginRequest extends FormRequest
             'email' => __('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
-            ]),
+            ], env('APP_LOCALE')),
         ]);
     }
 
@@ -81,5 +81,19 @@ class LoginRequest extends FormRequest
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+    }
+
+    /**
+     * Personalized error messages
+     */
+    public function messages()
+    {
+        return [
+            'email.required' => __('email.required'),
+            'email.string' => __('email.valid'),
+            'email.email' => __('email.valid'),
+            'email.exists' => __('email.exists'),
+            'password.required' => __('password.required'),
+        ];
     }
 }

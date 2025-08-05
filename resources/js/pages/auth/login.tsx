@@ -19,7 +19,7 @@ interface LoginProps {
 }
 
 export default function Login({ status }: LoginProps) {
-    const { data, setData, post, processing, reset } = useForm<Required<LoginForm>>({
+    const { data, setData, post, processing, reset, errors } = useForm<Required<LoginForm>>({
         email: '',
         password: '',
         remember: false,
@@ -43,9 +43,11 @@ export default function Login({ status }: LoginProps) {
                         name="email"
                         type="email"
                         tabIndex={1}
+                        className={errors.email ? 'border-destructive bg-destructive-foreground/5' : ''}
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
                         placeholder="correo@ejemplo.com"
+                        error={errors.email}
                         required
                     />
 

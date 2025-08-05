@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return inertia('welcome');
+    return to_route('login' );
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
