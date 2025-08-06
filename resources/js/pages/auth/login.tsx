@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import { SharedData } from '@/types';
 
 type LoginForm = {
     email: string;
@@ -19,6 +20,8 @@ interface LoginProps {
 }
 
 export default function Login({ status }: LoginProps) {
+    const {} = usePage<SharedData>().props;
+
     const { data, setData, post, processing, reset, errors } = useForm<Required<LoginForm>>({
         email: '',
         password: '',
@@ -58,6 +61,7 @@ export default function Login({ status }: LoginProps) {
                             required
                             tabIndex={2}
                             value={data.password}
+                            error={errors.password}
                             onChange={(e) => setData('password', e.target.value)}
                             placeholder="******"
                         />

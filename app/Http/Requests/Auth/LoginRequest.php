@@ -92,7 +92,7 @@ class LoginRequest extends FormRequest
             'email.required' => __('email.required'),
             'email.string' => __('email.valid'),
             'email.email' => __('email.valid'),
-            'email.exists' => __('email.exists'),
+            'email.exists' => __('email.not_exists'),
             'password.required' => __('password.required'),
         ];
     }

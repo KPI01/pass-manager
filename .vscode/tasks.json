@@ -17,7 +17,7 @@
         {
             "label": "pnpm: dev",
             "type": "shell",
-            "command": "pnpm run dev",
+            "command": "pnpm dev",
             "runOptions": {
                 "runOn": "folderOpen"
             },
@@ -25,6 +25,16 @@
                 "reveal": "never",
                 "panel": "shared",
                 "group": "dev server"
+            }
+        },
+        {
+            "label": "pnpm: build",
+            "type": "shell",
+            "command": "pnpm build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "group": "build"
             }
         }
     ]
