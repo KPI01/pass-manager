@@ -19,7 +19,7 @@ class RegisterFactory extends Factory
     {
         $type = $this->faker->randomElement(['user', 'email']);
         $login = $type === 'user' ? $this->faker->userName : $this->faker->email;
-        $password = $this->faker->password;
+        $password = $this->faker->password();
 
         return [
             'description' => $this->faker->sentence,

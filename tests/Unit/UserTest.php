@@ -7,70 +7,80 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Tests\TestCase;
 
-uses(Tests\TestCase::class, RefreshDatabase::class);
-test('user can be created', function () {
-    Role::factory()->create(['name' => 'Usuario', 'short' => 'user']);
+class UserTest extends TestCase
+{
+    use RefreshDatabase;
 
-    $credentials = [
-        'email' => fake()->email(),
-        'password' => fake()->password(8, 12)
-    ];
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    User::factory()->create([
-        'email' => $credentials['email'],
-        'password' => $credentials['password']
-    ]);
+        Role::factory()->standard()->create();
+    }
 
-    $this->assertDatabaseHas(User::class, [
-        'email' => $credentials['email']
-    ]);
-});
+    public function test_user_can_be_created()
+    {
+        $credentials = [
+            'email' => fake()->email(),
+            'password' => fake()->password(6, 12)
+        ];
 
-test('user password is hashed', function () {
-    Role::factory()->create(['name' => 'Usuario', 'short' => 'user']);
+        User::factory()->create([
+            'email' => $credentials['email'],
+            'password' => $credentials['password']
+        ]);
 
-    $credentials = [
-        'email' => fake()->email(),
-        'password' => fake()->password(8, 12)
-    ];
+        $this->assertDatabaseHas(User::class, [
+            'email' => $credentials['email']
+        ]);
+    }
 
-    User::factory()->create([
-        'email' => $credentials['email'],
-        'password' => $credentials['password']
-    ]);
+    public function test_user_password_is_hashed()
+    {
+        $credentials = [
+            'email' => fake()->email(),
+            'password' => fake()->password(8, 12)
+        ];
 
-    $this->assertDatabaseMissing(User::class, [
-        'email' => $credentials['password'],
-    ]);
+        User::factory()->create([
+            'email' => $credentials['email'],
+            'password' => $credentials['password']
+        ]);
 
-    $encryptedPassword = User::where('email', $credentials['email'])->first()->password;
+        $this->assertDatabaseMissing(User::class, [
+            'email' => $credentials['password'],
+        ]);
 
-    expect($encryptedPassword)->not->toEqual($credentials['password']);
-    expect(Hash::check($credentials['password'], $encryptedPassword))->toBeTrue();
-});
+        $encryptedPassword = User::where('email', $credentials['email'])->first()->password;
 
-test('user has role relationship', function () {
-    $role = Role::factory()->create(['name' => 'Usuario', 'short' => 'user']);
+        $this->assertNotEquals($encryptedPassword, $credentials['password']);
+        $this->assertTrue(Hash::check($credentials['password'], $encryptedPassword));
+    }
 
-    $user = User::factory()->create();
+    public function test_user_has_role_relationship()
+    {
+        $role = Role::where('short', 'user')->first();
 
-    expect($user->role())->toBeInstanceOf(BelongsTo::class);
-    expect($user->role)->toBeInstanceOf(Role::class);
-    expect($user->role->id)->toEqual($role->id);
-    $this->assertModelExists($user->role);
-});
+        $user = User::factory()->create();
 
-test('user has registers relationship', function () {
-    Role::factory()->create(['name' => 'Usuario', 'short' => 'user']);
+        $this->assertInstanceOf(BelongsTo::class, $user->role());
+        $this->assertInstanceOf(Role::class, $user->role);
+        $this->assertEquals($role->id, $user->role->id);
+        $this->assertModelExists($user->role);
+    }
 
-    $user = User::factory()->create();
-    $registers = Register::factory()->count(10)->createQuietly(['owner_id' => $user->id]);
+    public function test_user_has_registers_relationship()
+    {
+        $user = User::factory()->create();
+        $registers = Register::factory()->count(10)->createQuietly(['owner_id' => $user->id]);
 
-    expect($user->registers())->toBeInstanceOf(HasMany::class);
-    $registers->map(function (Register $register) use ($user) {
-        expect($register)->toBeInstanceOf(Register::class);
-        expect($register->owner_id)->toEqual($user->id);
-        $this->assertModelExists($register);
-    });
-});
+        $this->assertInstanceOf(HasMany::class, $user->registers());
+        $registers->map(function (Register $register) use ($user) {
+            $this->assertInstanceOf(Register::class, $register);
+            $this->assertEquals($user->id, $register->owner_id);
+            $this->assertModelExists($register);
+        });
+    }
+}

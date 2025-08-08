@@ -26,7 +26,7 @@ class RoleFactory extends Factory
 
     public function standard(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn() => [
             'name' => 'Usuario',
             'short' => 'user',
         ]);
@@ -34,7 +34,7 @@ class RoleFactory extends Factory
 
     public function admin(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn() => [
             'name' => 'Administrador',
             'short' => 'admin',
         ]);

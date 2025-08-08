@@ -15,6 +15,19 @@
             }
         },
         {
+            "label": "artisan: test",
+            "type": "shell",
+            "command": "php artisan test",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "group": "testing"
+            }
+        },
+        {
             "label": "pnpm: dev",
             "type": "shell",
             "command": "pnpm dev",

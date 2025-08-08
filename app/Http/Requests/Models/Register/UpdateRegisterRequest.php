@@ -28,7 +28,7 @@ class UpdateRegisterRequest extends FormRequest
             'description' => ['sometimes', 'max:255'],
             'type' => ['sometimes', Rule::in(['user', 'email'])],
             'login' => ['sometimes', 'max:150'],
-            'password' => ['sometimes', 'min:8'],
+            'password' => ['sometimes'],
             'notes' => ['nullable', 'max:350'],
         ];
     }

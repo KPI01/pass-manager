@@ -55,20 +55,4 @@ class RegisterPolicy
     {
         return $user->id === $register->owner->id;
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Register $register): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Register $register): bool
-    {
-        return false;
-    }
 }

@@ -50,7 +50,7 @@ class RegisterController extends Controller
 
         Register::create($validated);
 
-        return to_route('register.index');
+        return to_route('register.index',[],201);
     }
 
     /**
@@ -69,7 +69,7 @@ class RegisterController extends Controller
             ->where('action', '!=', 'delete')
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         return response()->json([
             'status' => 'success',
             'history' => $history
@@ -85,7 +85,7 @@ class RegisterController extends Controller
             return response()->json([
                 'status' => 'error',
                 'error' => 'No tienes permisos para ver la contraseña'
-            ], 403);
+            ], 401);
         }
 
         return response()->json([
